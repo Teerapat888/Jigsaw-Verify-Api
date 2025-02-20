@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geetest Jigsaw CAPTCHA</title>
+    <script src="https://static.geetest.com/static/tools/gt.js"></script>
+</head>
+<body>
+
+    <div id="captcha-container"></div>
+    <button id="submit-btn" disabled>Verify</button>
+
+    <script>
+        fetch("http://127.0.0.1/test/backend.php") // เรียก API จาก Backend
+            .then(response => response.json())
+            .then(data => {
+                initGeetest({
+                    gt: data.gt,
+                    challenge: data.challenge,
+                    offline: !data.success,
+                    lang: "th",
+                    new_captcha: true,
+                    product: "float",
+                    width: "300px"
+                }, function(captchaObj) {
+                    captchaObj.appendTo("#captcha-container");
+                    captchaObj.onSuccess(() => {
+                        document.getElementById("submit-btn").disabled = false;
+                    });
+                });
+            })
+            .catch(error => console.error("Geetest API Error:", error));
+    </script>
+
+</body>
+</html>
